@@ -3,7 +3,7 @@
     <div class="mx-auto min-h-screen max-w-[768px] flex flex-col">
       <!-- iPhone Frame -->
       <div
-        class="mx-auto w-full max-w-[428px] min-h-screen relative bg-background shadow-2xl"
+        class="mx-auto w-full max-w-[768px] h-full max-h-[1624px] aspect-[9/16] rounded-[48px] min-h-screen relative bg-background shadow-2xl"
       >
         <!-- Notch -->
         <div
@@ -31,7 +31,7 @@
 
         <!-- Footer -->
         <footer
-          class="fixed bottom-0 w-full max-w-[428px] bg-background/80 backdrop-blur-md border-t"
+          class="fixed bottom-0 w-full max-w-[768px] bg-background/80 backdrop-blur-md border-t"
         >
           <nav class="flex items-center justify-around h-16">
             <NuxtLink

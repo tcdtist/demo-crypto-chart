@@ -11,15 +11,17 @@ export const useCryptoStore = defineStore("crypto", {
     chartData: null,
     isLoading: false,
     error: null,
+    exchangeRate: 23500,
   }),
 
   getters: {
     getCurrentPrice: (state) => {
-      if (!state.chartData?.c.length) return 0;
-      return state.chartData.c[state.chartData.c.length - 1];
+      if (!state.chartData?.c?.length) return 0;
+      const price = state.chartData.c[state.chartData.c.length - 1];
+      return state.currency === "USD" ? price : price * state.exchangeRate;
     },
     getPriceChange: (state) => {
-      if (!state.chartData?.c.length) return 0;
+      if (!state.chartData?.c?.length) return 0;
       const prices = state.chartData.c;
       const firstPrice = prices[0];
       const lastPrice = prices[prices.length - 1];
@@ -65,7 +67,11 @@ export const useCryptoStore = defineStore("crypto", {
       this.fetchChartData();
     },
 
-    toggleCurrency() {
+    async toggleCurrency() {
+      if (this.currency === "USD") {
+        const { rate } = useExchangeRate();
+        this.exchangeRate = rate.value;
+      }
       this.currency = this.currency === "USD" ? "VND" : "USD";
     },
 

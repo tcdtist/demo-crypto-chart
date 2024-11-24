@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <!-- Chart Container -->
     <div
-      class="relative h-[500px] rounded-xl bg-card p-4 shadow-lg border border-border overflow-hidden"
+      class="relative h-[50vh] rounded-xl bg-card p-4 shadow-lg border border-border overflow-hidden"
     >
       <ClientOnly>
         <v-chart class="h-full w-full" :option="chartOption" autoresize />
@@ -18,17 +18,23 @@
     </div>
     <!-- Chart Info -->
     <div class="grid grid-cols-3 gap-4">
-      <div class="rounded-lg bg-card p-4 border border-border">
+      <div class="rounded-lg bg-card p-4 border border-border overflow-hidden">
         <p class="text-sm text-muted-foreground">24h Low</p>
-        <p class="text-lg font-bold">{{ formatPrice(getDayLow) }}</p>
+        <p class="text-lg font-bold overflow-x-auto no-scrollbar">
+          {{ formatPrice(getDayLow) }}
+        </p>
       </div>
-      <div class="rounded-lg bg-card p-4 border border-border">
+      <div class="rounded-lg bg-card p-4 border border-border overflow-hidden">
         <p class="text-sm text-muted-foreground">24h High</p>
-        <p class="text-lg font-bold">{{ formatPrice(getDayHigh) }}</p>
+        <p class="text-lg font-bold overflow-x-auto no-scrollbar">
+          {{ formatPrice(getDayHigh) }}
+        </p>
       </div>
-      <div class="rounded-lg bg-card p-4 border border-border">
+      <div class="rounded-lg bg-card p-4 border border-border overflow-hidden">
         <p class="text-sm text-muted-foreground">24h Volume</p>
-        <p class="text-lg font-bold">{{ formatVolume(getDayVolume) }}</p>
+        <p class="text-lg font-bold overflow-x-auto no-scrollbar">
+          {{ formatVolume(getDayVolume) }}
+        </p>
       </div>
     </div>
   </div>
@@ -69,11 +75,11 @@ const chartOption = computed(() => ({
     trigger: "axis",
     formatter: (params: any) => {
       const date = new Date(params[0].value[0]).toLocaleString();
-      const price = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: crypto.currency,
-      }).format(params[0].value[1]);
-      return `${date}<br/>${price}`;
+      const price =
+        crypto.currency === "USD"
+          ? params[0].value[1]
+          : params[0].value[1] * crypto.exchangeRate;
+      return `${date}<br/>${formatPrice(price)}`;
     },
   },
   xAxis: {
@@ -91,19 +97,21 @@ const chartOption = computed(() => ({
     },
     axisLabel: {
       formatter: (value: number) => {
-        return new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: crypto.currency,
-          notation: "compact",
-        }).format(value);
+        const price =
+          crypto.currency === "USD" ? value : value * crypto.exchangeRate;
+        return formatPrice(price);
       },
     },
   },
   series: [
     {
       data:
-        crypto.chartData?.t.map((t, i) => [t * 1000, crypto.chartData!.c[i]]) ||
-        [],
+        crypto.chartData?.t.map((t, i) => [
+          t * 1000,
+          crypto.currency === "USD"
+            ? crypto.chartData!.c[i]
+            : crypto.chartData!.c[i] * crypto.exchangeRate,
+        ]) || [],
       type: "line",
       smooth: true,
       showSymbol: false,
@@ -119,32 +127,38 @@ const chartOption = computed(() => ({
 
 const getDayLow = computed(() => {
   if (!crypto.chartData?.l.length) return 0;
-  return Math.min(...crypto.chartData.l);
+  const price = Math.min(...crypto.chartData.l);
+  return crypto.currency === "USD" ? price : price * crypto.exchangeRate;
 });
 
 const getDayHigh = computed(() => {
   if (!crypto.chartData?.h.length) return 0;
-  return Math.max(...crypto.chartData.h);
+  const price = Math.max(...crypto.chartData.h);
+  return crypto.currency === "USD" ? price : price * crypto.exchangeRate;
 });
 
 const getDayVolume = computed(() => {
   if (!crypto.chartData?.v.length) return 0;
-  return crypto.chartData.v.reduce((a, b) => a + b, 0);
+  const volume = crypto.chartData.v.reduce((a, b) => a + b, 0);
+  return crypto.currency === "USD" ? volume : volume * crypto.exchangeRate;
 });
 
 const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(crypto.currency === "USD" ? "en-US" : "vi-VN", {
     style: "currency",
     currency: crypto.currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: crypto.currency === "USD" ? 2 : 0,
   }).format(price);
 };
 
 const formatVolume = (volume: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(crypto.currency === "USD" ? "en-US" : "vi-VN", {
     notation: "compact",
-    maximumFractionDigits: 2,
+    style: "currency",
+    currency: crypto.currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: crypto.currency === "USD" ? 2 : 0,
   }).format(volume);
 };
 </script>

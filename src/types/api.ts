@@ -24,4 +24,5 @@ export interface CryptoState {
   chartData: Benchmark | null;
   isLoading: boolean;
   error: string | null;
+  exchangeRate: number;
 }
