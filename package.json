@@ -1,7 +1,16 @@
 {
-  "name": "nuxt-app",
+  "name": "demo-crypto-chart",
+  "description": "A modern, responsive cryptocurrency price tracking dashboard built with Nuxt 3, featuring real-time price updates, interactive charts, and seamless currency conversion.",
+  "repository": "https://github.com/tcdtist/demo-crypto-chart",
+  "author": "Chi Thanh Dang (tist)",
+  "version": "1.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
