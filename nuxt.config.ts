@@ -1,6 +1,7 @@
-// nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/color-mode"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/color-mode", "@pinia/nuxt"],
+
+  css: ["~/assets/css/main.css"],
 
   colorMode: {
     classSuffix: "",
@@ -8,7 +9,14 @@ export default defineNuxtConfig({
     fallback: "light",
   },
 
-  css: ["~/assets/css/main.css"],
+  components: {
+    global: true,
+    dirs: ["~/components"],
+  },
+
+  build: {
+    transpile: ["echarts", "vue-echarts"],
+  },
 
   typescript: {
     strict: true,
@@ -18,12 +26,22 @@ export default defineNuxtConfig({
     head: {
       title: "Crypto Chart",
       meta: [
-        { charset: "utf-8" },
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        {
+          charset: "utf-8",
+        },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
       ],
     },
   },
 
   srcDir: "src/",
+
+  imports: {
+    dirs: ["stores"],
+  },
+
   compatibilityDate: "2024-11-25",
 });

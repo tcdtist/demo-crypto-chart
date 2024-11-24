@@ -63,6 +63,8 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+
+    --radius: 0.5rem;
   }
 }
 
@@ -73,4 +75,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer utilities {
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+  }
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }

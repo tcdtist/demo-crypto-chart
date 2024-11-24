@@ -10,13 +10,21 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxtjs/color-mode": "^3.5.2",
-    "@nuxtjs/tailwindcss": "^6.12.2",
+    "@heroicons/vue": "^2.2.0",
+    "@nuxtjs/color-mode": "^3.3.2",
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@pinia/nuxt": "^0.7.0",
+    "@types/node": "^20.11.24",
+    "class-variance-authority": "^0.7.0",
     "echarts": "^5.5.1",
-    "nuxt": "^3.14.1592",
+    "nuxt": "^3.10.3",
+    "pinia": "^2.1.7",
     "tailwindcss-animate": "^1.0.7",
-    "vue": "latest",
-    "vue-echarts": "^7.0.3",
-    "vue-router": "latest"
+    "vue": "^3.4.19",
+    "vue-echarts": "^6.7.3"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
   }
 }
