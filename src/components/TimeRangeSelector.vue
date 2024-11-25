@@ -6,7 +6,7 @@
       class="relative p-1.5 text-sm font-medium transition-colors rounded-md hover:text-primary"
       :class="[
         crypto.timeRange === range
-          ? 'text-primary-foreground'
+          ? 'text-primary-foreground bg-primary/10'
           : 'text-muted-foreground hover:text-foreground',
       ]"
       @click="crypto.setTimeRange(range)"

@@ -18,24 +18,21 @@
     </div>
     <!-- Chart Info -->
     <div class="grid grid-cols-3 gap-4">
-      <div class="rounded-lg bg-card p-4 border border-border overflow-hidden">
-        <p class="text-sm text-muted-foreground">24h Low</p>
-        <p class="text-lg font-bold overflow-x-auto no-scrollbar">
-          {{ formatPrice(getDayLow) }}
-        </p>
-      </div>
-      <div class="rounded-lg bg-card p-4 border border-border overflow-hidden">
-        <p class="text-sm text-muted-foreground">24h High</p>
-        <p class="text-lg font-bold overflow-x-auto no-scrollbar">
-          {{ formatPrice(getDayHigh) }}
-        </p>
-      </div>
-      <div class="rounded-lg bg-card p-4 border border-border overflow-hidden">
-        <p class="text-sm text-muted-foreground">24h Volume</p>
-        <p class="text-lg font-bold overflow-x-auto no-scrollbar">
-          {{ formatVolume(getDayVolume) }}
-        </p>
-      </div>
+      <InfoCard
+        :title="`${crypto.getTimeRangeLabel} High`"
+        :value="formatPrice(crypto.getRangeHighPrice)"
+        icon="trending_up"
+      />
+      <InfoCard
+        :title="`${crypto.getTimeRangeLabel} Low`"
+        :value="formatPrice(crypto.getRangeLowPrice)"
+        icon="trending_down"
+      />
+      <InfoCard
+        :title="`${crypto.getTimeRangeLabel} Volume`"
+        :value="formatVolume(crypto.getRangeVolume)"
+        icon="analytics"
+      />
     </div>
   </div>
 </template>
@@ -48,15 +45,20 @@ import {
   TitleComponent,
   TooltipComponent,
   GridComponent,
+  DataZoomComponent,
 } from "echarts/components";
 import { UniversalTransition } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import { useCryptoStore } from "~/composables/useCrypto";
+import { ref } from "vue";
+import InfoCard from "./InfoCard.vue";
 
+// Register ECharts components
 echarts.use([
   TitleComponent,
   TooltipComponent,
   GridComponent,
+  DataZoomComponent,
   LineChart,
   CanvasRenderer,
   UniversalTransition,
@@ -68,7 +70,7 @@ const chartOption = computed(() => ({
   grid: {
     left: "3%",
     right: "4%",
-    bottom: "3%",
+    bottom: "15%", // Increased to accommodate data zoom
     containLabel: true,
   },
   tooltip: {
@@ -79,9 +81,31 @@ const chartOption = computed(() => ({
         crypto.currency === "USD"
           ? params[0].value[1]
           : params[0].value[1] * crypto.exchangeRate;
-      return `${date}<br/>${formatPrice(price)}`;
+      return `
+        <div class="p-2">
+          <div class="text-sm text-muted">${date}</div>
+          <div class="font-bold">${formatPrice(price)}</div>
+        </div>
+      `;
+    },
+    axisPointer: {
+      type: "cross",
+      label: {
+        backgroundColor: "#6a7985",
+      },
     },
   },
+  dataZoom: [
+    {
+      type: "inside",
+      start: 0,
+      end: 100,
+    },
+    {
+      start: 0,
+      end: 100,
+    },
+  ],
   xAxis: {
     type: "time",
     splitLine: {
@@ -117,32 +141,26 @@ const chartOption = computed(() => ({
       showSymbol: false,
       lineStyle: {
         width: 2,
+        color: "#10B981", // Customizable theme color
       },
       areaStyle: {
         opacity: 0.2,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: "#10B981",
+          },
+          {
+            offset: 1,
+            color: "rgba(16, 185, 129, 0.1)",
+          },
+        ]),
       },
     },
   ],
 }));
 
-const getDayLow = computed(() => {
-  if (!crypto.chartData?.l.length) return 0;
-  const price = Math.min(...crypto.chartData.l);
-  return crypto.currency === "USD" ? price : price * crypto.exchangeRate;
-});
-
-const getDayHigh = computed(() => {
-  if (!crypto.chartData?.h.length) return 0;
-  const price = Math.max(...crypto.chartData.h);
-  return crypto.currency === "USD" ? price : price * crypto.exchangeRate;
-});
-
-const getDayVolume = computed(() => {
-  if (!crypto.chartData?.v.length) return 0;
-  const volume = crypto.chartData.v.reduce((a, b) => a + b, 0);
-  return crypto.currency === "USD" ? volume : volume * crypto.exchangeRate;
-});
-
+// Formatting functions
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat(crypto.currency === "USD" ? "en-US" : "vi-VN", {
     style: "currency",

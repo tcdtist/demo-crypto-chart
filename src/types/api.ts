@@ -1,11 +1,11 @@
 export type Benchmark = {
-  s: string;
-  t: number[];
-  o: number[];
-  h: number[];
-  l: number[];
-  c: number[];
-  v: number[];
+  s: string; // symbol
+  t: number[]; // timestamps
+  o: number[]; // open prices
+  h: number[]; // high prices
+  l: number[]; // low prices
+  c: number[]; // closing prices
+  v: number[]; // volumes
 };
 
 export type SimplePriceFeed = {
@@ -20,7 +20,7 @@ export interface CryptoState {
   currentSymbol: string;
   timeRange: TimeRange;
   currency: "USD" | "VND";
-  priceFeeds: SimplePriceFeed[];
+  priceFeeds: SimplePriceFeed[]; // Should be properly typed
   chartData: Benchmark | null;
   isLoading: boolean;
   error: string | null;
